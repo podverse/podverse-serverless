@@ -10,7 +10,7 @@
     "postbuild": "cd dist && zip -r index.zip index.js*"
   },
   "author": "",
-  "license": "ISC",
+  "license": "0BSD",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.129",
     "@types/aws-serverless-express": "^3.3.9",

@@ -1,3 +1,12 @@
+Parameters:
+  ApiGatewayStageName:
+    Type: String
+    Default: "dev"
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Enter dev, staging, prod.
 
 Resources:
   HandlerLambdaFunction:
@@ -10,36 +19,43 @@ Resources:
       Role: !GetAtt LambdaFunctionRole.Arn
       Runtime: nodejs18.x
 
-  # Creates a single-route (wildcard) HTTP API for our Lambda function.
-  HttpApi:
-    Type: AWS::ApiGatewayV2::Api
+  ApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
     Properties:
-      Name: my-example-api
-      ProtocolType: HTTP
-  HttpApiIntegration:
-    Type: AWS::ApiGatewayV2::Integration
+      Name: "example-api-gw"
+      Description: "Example API"
+
+  ProxyResource:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      ApiId: !Ref HttpApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !GetAtt HandlerLambdaFunction.Arn
-      PayloadFormatVersion: '2.0'
-  ProxyHttpApiRoute:
-    Type: AWS::ApiGatewayV2::Route
-    DependsOn: HttpApiIntegration
+      ParentId: !GetAtt ApiGateway.RootResourceId
+      RestApiId: !Ref ApiGateway
+      PathPart: '{proxy+}'
+
+  ApiGatewayRootMethod:
+    Type: "AWS::ApiGateway::Method"
     Properties:
-      RouteKey: ANY /{proxy+}
-      ApiId: !Ref HttpApi
-      Target:
-        !Join
-        - /
-        - - integrations
-          - !Ref HttpApiIntegration
-  HttpApiStage:
-    Type: AWS::ApiGatewayV2::Stage
+      AuthorizationType: NONE
+      HttpMethod: ANY
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        IntegrationResponses:
+          -
+            StatusCode: 200
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations"
+          - lambdaArn: !GetAtt "HandlerLambdaFunction.Arn"
+      ResourceId: !Ref ProxyResource
+      RestApiId: !Ref "ApiGateway"
+
+  ApiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn:
+      - "ApiGatewayRootMethod"
     Properties:
-      StageName: $default
-      ApiId: !Ref HttpApi
-      AutoDeploy: true
+      RestApiId: !Ref "ApiGateway"
+      StageName: !Ref "ApiGatewayStageName"
 
   # Allows the Lambda function to access CloudWatch (add other services here, e.g. S3)
   LambdaFunctionRole:
@@ -67,35 +83,10 @@ Resources:
             - logs:PutLogEvents
             Resource: "*"
 
-  # Allows API Gateway to call our Lambda function.
-  HandlerLambdaPermissionHttpApi:
-    Type: AWS::Lambda::Permission
+  LambdaApiGatewayInvoke:
+    Type: "AWS::Lambda::Permission"
     Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt HandlerLambdaFunction.Arn
-      Principal: apigateway.amazonaws.com
-      SourceArn:
-        !Join
-        - ''
-        - - 'arn:'
-          - !Ref AWS::Partition
-          - ':execute-api:'
-          - !Ref AWS::Region
-          - ':'
-          - !Ref AWS::AccountId
-          - ':'
-          - !Ref HttpApi
-          - /*
-
-# Outputs the URL to our Lambda HTTP API.
-Outputs:
-  ApiUrl:
-    Description: URL of the HTTP API.
-    Value:
-      !Join
-      - ''
-      - - !Ref HttpApi
-        - .execute-api.
-        - !Ref AWS::Region
-        - .
-        - !Ref AWS::URLSuffix
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt "HandlerLambdaFunction.Arn"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/*/*"

@@ -1,8 +1,17 @@
+import * as Koa from 'koa'
+import { parseFeed } from './parser'
 
-export async function handler(ctx: Koa.BaseContext, next: () => Promise<any>) {
-  // add handler logic here
+export async function handler(ctx: Koa.BaseContext, next: () => Promise<void>) {
+  const { query } = ctx
+  // TODO: remove any?
+  const { feedUrl } = query as any
 
-  ctx.body = { message: "parser response" };
-  return next();
+  if (!feedUrl) {
+    throw new Error('A feedUrl parameter must be provided')
+  }
+
+  const response = await parseFeed(feedUrl)
+  ctx.body = response
+  return next()
 }
   

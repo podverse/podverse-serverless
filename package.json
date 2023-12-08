@@ -37,7 +37,9 @@
     "koa-bodyparser": "^4.4.1",
     "koa-mount": "^4.0.0",
     "koa-mw-logger": "^1.7.5",
+    "node-fetch": "^3.3.2",
     "podcast-partytime": "^4.8.0",
+    "podverse-shared": "^4.15.0",
     "zod": "^3.22.4"
   }
 }

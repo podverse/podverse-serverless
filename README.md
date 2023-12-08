@@ -4,7 +4,7 @@
 npm run dev
 ```
 
-Should spin up a server on port 3000, making a request to http://localhost:3000/api/hello should respond
+Should spin up a server on port 3030, making a request to http://localhost:3030/api/hello should respond
 
 ## Build
 

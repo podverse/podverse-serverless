@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --import tsx -r dotenv/config src/dev.ts",
+    "dev": "tsx watch -r dotenv/config src/dev.ts",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "esbuild src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
     "postbuild": "cd dist && zip -r index.zip index.js*"

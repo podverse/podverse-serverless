@@ -1,4 +1,5 @@
 {
+  "root": true,
   "parser": "@typescript-eslint/parser",
   "extends": [
       "plugin:@typescript-eslint/recommended"
@@ -14,6 +15,8 @@
       "@typescript-eslint/no-var-requires": 0,
       "jsx-a11y/anchor-is-valid": 0,
       "no-mixed-operators": 0,
-      "no-restricted-globals": 0
-  }
+      "no-restricted-globals": 0,
+      "semi": [1, "never"]
+  },
+  "ignorePatterns": ["**/node_modules/**"]
 }

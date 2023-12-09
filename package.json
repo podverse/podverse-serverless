@@ -7,7 +7,10 @@
     "dev": "tsx watch -r dotenv/config src/dev.ts",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "esbuild src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
-    "postbuild": "cd dist && zip -r index.zip index.js*"
+    "postbuild": "cd dist && zip -r index.zip index.js*",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint --fix",
+    "prepare": "npm run build"
   },
   "author": "",
   "license": "MIT",
@@ -39,7 +42,9 @@
     "koa-mw-logger": "^1.7.5",
     "node-fetch": "^3.3.2",
     "podcast-partytime": "^4.8.0",
-    "podverse-shared": "^4.15.0",
+    "podverse-parser": "^1.0.0",
+    "podverse-shared": "^4.15.2",
+    "typeorm": "0.2.45",
     "zod": "^3.22.4"
   }
 }

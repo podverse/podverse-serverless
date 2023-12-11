@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx -r dotenv/config src/dev.ts",
-    "dev:watch": "nodemon --watch 'src' --watch $(realpath node_modules/podverse-parser) --watch $(realpath node_modules/podverse-shared) -e ts --exec tsx -r dotenv/config src/dev.ts",
+    "dev:watch": "nodemon --watch 'src' --watch $(realpath node_modules/podverse-external-services) --watch $(realpath node_modules/podverse-parser) --watch $(realpath node_modules/podverse-shared) -e ts --exec tsx -r dotenv/config src/dev.ts",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "./esbuild.js",
     "postbuild": "cd dist && zip -r index.zip index.js*",

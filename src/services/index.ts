@@ -1,4 +1,4 @@
-import helloService from "./hello";
-import parserService from "./parser";
+import helloService from "./hello"
+import parserPartytimeService from "./parser"
 
-export const services = [helloService, parserService];
+export const services = [helloService, parserPartytimeService]

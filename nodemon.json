@@ -1,10 +1,4 @@
 {
-  "watch": [
-    "src",
-    "node_modules/podverse-parser",
-    "node_modules/podverse-orm",
-    "node_modules/podverse-shared"
-  ],
   "ext": "ts",
   "env": {
     "NODE_ENV": "development"

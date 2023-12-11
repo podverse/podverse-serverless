@@ -4,16 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -e ts --exec tsx -r dotenv/config src/dev.ts",
+    "dev": "tsx -r dotenv/config src/dev.ts",
+    "dev:watch": "nodemon --watch 'src' --watch $(realpath node_modules/podverse-parser) --watch $(realpath node_modules/podverse-shared) -e ts --exec tsx -r dotenv/config src/dev.ts",
     "prebuild": "rimraf dist && mkdir dist",
-    "build": "esbuild src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
+    "build": "./esbuild.js",
     "postbuild": "cd dist && zip -r index.zip index.js*",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint --fix",
     "prepare": "npm run build"
   },
-  "author": "",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/podverse/podverse-serverless.git"
+  },
+  "license": "AGPLv3",
+  "bugs": {
+    "url": "https://github.com/podverse/podverse-serverless/issues"
+  },
+  "homepage": "https://github.com/podverse/podverse-serverless#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.129",
     "@types/aws-serverless-express": "^3.3.9",

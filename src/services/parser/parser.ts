@@ -1,9 +1,14 @@
 
-import { Podcast, addParameterToURL } from 'podverse-shared'
-import { partytimeParseFeed } from './partytimeParser'
+import { PartytimeService } from 'podverse-parser'
+import { Podcast, addCacheBustUrlParameter, createAbortController } from 'podverse-shared'
 import { logPerformance } from '../../utility/logger'
+import { config } from '../../config'
 
 // TODO: add proper logging
+
+const parser = new PartytimeService({
+  userAgent: config.userAgent
+})
 
 export const parseFeed = async (
   url: string,
@@ -19,7 +24,7 @@ export const parseFeed = async (
     logPerformance(`urlToParse ${urlToParse}`)
 
     logPerformance(`fetchFeed start`)
-    const partytimeParsedFeed = await partytimeParseFeed(url, abortAPI)
+    const partytimeParsedFeed = await parser.parseFeed(url, abortAPI)
     logPerformance(`fetchFeed end`)
 
     clearTimeout(abortTimeout)
@@ -35,22 +40,4 @@ export const parseFeed = async (
     logPerformance(`parseRSSFeedUrl ${url} error`)
     throw(error)
   }
-}
-
-// helpers in alphabetical order
-
-const addCacheBustUrlParameter = (url: string, excludeCacheBust?: boolean) => {
-  return !excludeCacheBust
-  ? addParameterToURL(url, `cacheBust=${Date.now()}`)
-  : url
-}
-
-const createAbortController = () => {
-  const abortTimeLimit = 60000
-  const abortController = new AbortController()
-  const abortTimeout = setTimeout(() => {
-    logPerformance('abortController - time exceeded')
-    abortController.abort()
-  }, abortTimeLimit)
-  return { abortController, abortTimeout }
 }

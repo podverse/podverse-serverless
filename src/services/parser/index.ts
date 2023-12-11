@@ -1,16 +1,16 @@
-import Koa from "koa";
-import Router from "@koa/router";
+import Koa from "koa"
+import Router from "@koa/router"
 
-import { handler } from "./handler";
+import { handler } from "./handler"
 
-const app = new Koa();
-const router = new Router();
+const app = new Koa()
+const router = new Router()
 
-router.get("/parser", handler);
+router.get("/parser", handler)
 
-app.use(router.routes()).use(router.allowedMethods());
+app.use(router.routes()).use(router.allowedMethods())
 
 export default {
   path: "/api",
   service: app,
-};
+}

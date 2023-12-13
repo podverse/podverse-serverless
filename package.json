@@ -51,9 +51,9 @@
     "koa-mw-logger": "^1.7.5",
     "node-fetch": "^3.3.2",
     "podcast-partytime": "^4.8.0",
+    "podverse-orm": "^1.0.0",
     "podverse-parser": "^1.0.0",
     "podverse-shared": "^4.15.2",
-    "typeorm": "0.2.45",
     "zod": "^3.22.4"
   }
 }

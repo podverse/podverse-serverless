@@ -1,14 +1,10 @@
 
-import { PartytimeService } from 'podverse-parser'
-import { Podcast, addCacheBustUrlParameter, createAbortController } from 'podverse-shared'
+import { getPodcastByFeedUrl } from 'podverse-orm'
+import { Podcast, addCacheBustUrlParameter } from 'podverse-shared'
 import { logPerformance } from '../../utility/logger'
-import { config } from '../../config'
+import { partytimeInstance } from '../../factories/partytime'
 
 // TODO: add proper logging
-
-const parser = new PartytimeService({
-  userAgent: config.userAgent
-})
 
 export const parseFeed = async (
   url: string,
@@ -16,26 +12,39 @@ export const parseFeed = async (
 ) => {
   logPerformance(`parseRSSFeedUrl ${url} started...`)
   const { excludeCacheBust } = databasePodcast || {}
-  const abortAPI = createAbortController()
-  const { abortTimeout } = abortAPI
 
   try {
-    const urlToParse = addCacheBustUrlParameter(url, excludeCacheBust)
-    logPerformance(`urlToParse ${urlToParse}`)
-
-    logPerformance(`fetchFeed start`)
-    const partytimeParsedFeed = await parser.parseFeed(url, abortAPI)
-    logPerformance(`fetchFeed end`)
-
-    clearTimeout(abortTimeout)
-
-    logPerformance(`parseRSSFeedUrl ${url} finished`)
-    return {
-      podcast: partytimeParsedFeed.podcast,
-      episodes: partytimeParsedFeed.episodes,
-      liveItems: partytimeParsedFeed.liveItems
+    /*
+      parseFeed will take 2 different paths depending on whether
+      a podcast for that feed already exists in our database.
+    */
+    let databasePodcast = null
+    try {
+      databasePodcast = await getPodcastByFeedUrl(url)
+    } catch (error) {
+      //
     }
 
+    if (databasePodcast) {
+      // Return just the podcastId, so the client app can decide what to do with it.
+      return {
+        podcastId: databasePodcast.id
+      }
+    } else {
+      const urlToParse = addCacheBustUrlParameter(url, excludeCacheBust)
+      logPerformance(`urlToParse ${urlToParse}`)
+  
+      logPerformance(`fetchFeed start`)
+      const partytimeParsedFeed = await partytimeInstance.parseFeed(url)
+      logPerformance(`fetchFeed end`)
+  
+      logPerformance(`parseRSSFeedUrl ${url} finished`)
+      return {
+        podcast: partytimeParsedFeed.podcast,
+        episodes: partytimeParsedFeed.episodes,
+        liveItems: partytimeParsedFeed.liveItems
+      }
+    }
   } catch (error) {
     logPerformance(`parseRSSFeedUrl ${url} error`)
     throw(error)

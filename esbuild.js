@@ -10,6 +10,6 @@ require("esbuild")
     sourcemap: true,
     platform: 'node',
     target: 'es2020',
-    external: ['sharp']
+    external: ['sharp', 'pg-native']
   })
   .catch(() => process.exit(1))

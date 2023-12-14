@@ -1,8 +1,9 @@
 
-import { getPodcastByFeedUrl } from 'podverse-orm'
-import { Podcast, addCacheBustUrlParameter } from 'podverse-shared'
+import { getFeedUrlByUrlIgnoreProtocolForPublicPodcast } from 'podverse-orm'
+import { Podcast, addCacheBustUrlParameter, generateAbortAPI } from 'podverse-shared'
 import { logPerformance } from '../../utility/logger'
 import { partytimeInstance } from '../../factories/partytime'
+import { _logEnd, _logStart } from '../../../../podverse-shared/dist'
 
 // TODO: add proper logging
 
@@ -12,15 +13,13 @@ export const parseFeed = async (
 ) => {
   logPerformance(`parseRSSFeedUrl ${url} started...`)
   const { excludeCacheBust } = databasePodcast || {}
+  const abortAPI = generateAbortAPI()
 
   try {
-    /*
-      parseFeed will take 2 different paths depending on whether
-      a podcast for that feed already exists in our database.
-    */
     let databasePodcast = null
     try {
-      databasePodcast = await getPodcastByFeedUrl(url)
+      const feedUrl = await getFeedUrlByUrlIgnoreProtocolForPublicPodcast(url)
+      databasePodcast = feedUrl?.podcast
     } catch (error) {
       //
     }
@@ -32,13 +31,14 @@ export const parseFeed = async (
       }
     } else {
       const urlToParse = addCacheBustUrlParameter(url, excludeCacheBust)
-      logPerformance(`urlToParse ${urlToParse}`)
+      logPerformance(`urlToParse ${urlToParse}`, _logStart)
   
-      logPerformance(`fetchFeed start`)
-      const partytimeParsedFeed = await partytimeInstance.parseFeed(url)
-      logPerformance(`fetchFeed end`)
+      logPerformance(`fetchFeed`, _logStart)
+      const partytimeParsedFeed = await partytimeInstance.parseFeed(url, abortAPI)
+      clearTimeout(abortAPI.abortTimeout)
+      logPerformance(`fetchFeed`, _logEnd)
   
-      logPerformance(`parseRSSFeedUrl ${url} finished`)
+      logPerformance(`parseRSSFeedUrl ${urlToParse}`, _logEnd)
       return {
         podcast: partytimeParsedFeed.podcast,
         episodes: partytimeParsedFeed.episodes,
@@ -46,7 +46,7 @@ export const parseFeed = async (
       }
     }
   } catch (error) {
-    logPerformance(`parseRSSFeedUrl ${url} error`)
+    logPerformance(`error: parseRSSFeedUrl ${url}`, _logEnd)
     throw(error)
   }
 }

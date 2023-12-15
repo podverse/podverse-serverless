@@ -53,7 +53,7 @@
     "podcast-partytime": "^4.8.0",
     "podverse-orm": "^1.0.0",
     "podverse-parser": "^1.0.0",
-    "podverse-shared": "^4.15.2",
+    "podverse-shared": "^4.15.3",
     "zod": "^3.22.4"
   }
 }

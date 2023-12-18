@@ -1,7 +1,6 @@
 
 import { getFeedUrlByUrlIgnoreProtocolForPublicPodcast } from 'podverse-orm'
-import { Podcast, addCacheBustUrlParameter, generateAbortAPI } from 'podverse-shared'
-import { logPerformance } from '../../utility/logger'
+import { Podcast, addCacheBustUrlParameter, generateAbortAPI, logPerformance } from 'podverse-shared'
 import { partytimeInstance } from '../../factories/partytime'
 import { _logEnd, _logStart } from '../../../../podverse-shared/dist'
 

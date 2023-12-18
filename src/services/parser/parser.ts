@@ -27,7 +27,10 @@ export const parseFeed = async (
     if (databasePodcast) {
       // Return just the podcastId, so the client app can decide what to do with it.
       return {
-        podcastId: databasePodcast.id
+        podcastId: databasePodcast.id,
+        podcast: null,
+        episodes: null,
+        liveItems: null
       }
     } else {
       const urlToParse = addCacheBustUrlParameter(url, excludeCacheBust)
@@ -40,6 +43,7 @@ export const parseFeed = async (
   
       logPerformance(`parseRSSFeedUrl ${urlToParse}`, _logEnd)
       return {
+        podcastId: null,
         podcast: partytimeParsedFeed.podcast,
         episodes: partytimeParsedFeed.episodes,
         liveItems: partytimeParsedFeed.liveItems

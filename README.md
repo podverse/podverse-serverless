@@ -1,7 +1,19 @@
+# podverse-serverless
+
+## Developing Podverse modules
+
+Podverse maintains several different modules which are imported across apps. Please read [Developing Podverse modules](https://github.com/podverse/podverse-ops/blob/master/docs/how-to-develop-podverse-modules.md) for a workflow you can use to make code changes to this module locally.
+
 ## Local dev
 
 ```sh
-npm run dev
+yarn dev
+```
+
+or
+
+```sh
+yarn dev:watch
 ```
 
 Should spin up a server on port 3030, making a request to http://localhost:3030/api/hello should respond
@@ -9,7 +21,7 @@ Should spin up a server on port 3030, making a request to http://localhost:3030/
 ## Build
 
 ```sh
-npm install && npm run build
+yarn && yarn build
 ```
 
 ## Upload to S3

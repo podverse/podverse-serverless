@@ -4,27 +4,39 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --import tsx -r dotenv/config src/dev.ts",
+    "dev": "tsx -r dotenv/config src/dev.ts",
+    "dev:watch": "nodemon --watch 'src' --watch $(realpath node_modules/podverse-external-services) --watch $(realpath node_modules/podverse-parser) --watch $(realpath node_modules/podverse-shared) -e ts --exec tsx -r dotenv/config src/dev.ts",
     "prebuild": "rimraf dist && mkdir dist",
-    "build": "esbuild src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
-    "postbuild": "cd dist && zip -r index.zip index.js*"
+    "build": "./esbuild.js",
+    "postbuild": "cd dist && zip -r index.zip index.js*",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint --fix",
+    "prepare": "npm run build"
   },
-  "author": "",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/podverse/podverse-serverless.git"
+  },
+  "license": "AGPLv3",
+  "bugs": {
+    "url": "https://github.com/podverse/podverse-serverless/issues"
+  },
+  "homepage": "https://github.com/podverse/podverse-serverless#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.129",
     "@types/aws-serverless-express": "^3.3.9",
     "@types/koa": "^2.13.12",
-    "@types/koa__cors": "^4.0.3",
-    "@types/koa__router": "^12.0.4",
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-mount": "^4.0.5",
+    "@types/koa__cors": "^4.0.3",
+    "@types/koa__router": "^12.0.4",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
     "dotenv": "^16.3.1",
     "esbuild": "^0.19.8",
     "eslint": "^8.54.0",
+    "nodemon": "^3.0.2",
     "rimraf": "^5.0.5",
     "tsx": "^4.6.0",
     "typescript": "^5.3.2"
@@ -37,6 +49,11 @@
     "koa-bodyparser": "^4.4.1",
     "koa-mount": "^4.0.0",
     "koa-mw-logger": "^1.7.5",
+    "node-fetch": "^3.3.2",
+    "podcast-partytime": "^4.8.0",
+    "podverse-orm": "^1.0.0",
+    "podverse-parser": "^1.0.0",
+    "podverse-shared": "^4.15.3",
     "zod": "^3.22.4"
   }
 }

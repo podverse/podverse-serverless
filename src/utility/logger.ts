@@ -1,5 +1,7 @@
 export const logPerformance = (subject: string, notes = '') => {
-  console.log(
-    subject + ',' + Math.ceil(performance.now()).toString() + 'ms' + ',' + notes + ',' + new Date()
-  )
+  return new Promise(() => {
+    console.log(
+      subject + ',' + Math.ceil(Date.now()).toString() + 'ms' + ',' + notes + ',' + new Date()
+    )
+  })
 }
